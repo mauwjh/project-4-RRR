@@ -1,20 +1,24 @@
 import axios from "axios";
-import { useState, useContext } from "react";
-import { Link } from "react-router-dom";
-import {UserContext} from '../UserContext'
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const Login = () => {
+const Signup = () => {
+  const [username, setUsername] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [usernameValidation, setUsernameValidation] = useState("");
   const [emailValidation, setEmailValidation] = useState("");
   const [pwValidation, setPwValidation] = useState("");
-  const [errorMessage, setErrorMessage] = useState();
-  const userContext = useContext(UserContext)
+  const [message, setMessage] = useState();
+  const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (!email) {
+    if (!username) {
+      setUsernameValidation(false);
+    } else if (!email) {
+      setUsernameValidation(true);
       setEmailValidation(false);
     } else if (!password) {
       setEmailValidation(true);
@@ -22,18 +26,20 @@ const Login = () => {
     } else {
       setPwValidation(true);
       axios
-        .post("/api/users/login", {
+        .post("/api/users/new", {
+          username: username,
           email: email,
           password: password,
         })
         .then((res) => {
           console.log(res);
-          if (res.data.authenticated) {
-            localStorage.setItem("token", res.data.token);
-            userContext.setUser(res.data)
-            window.history.back()
+          if (res.data.success) {
+            setMessage(res.data.message);
+            setTimeout(() => {
+              navigate('/')
+            }, 1500)
           } else {
-            setErrorMessage(res.data.message);
+            setMessage(res.data.message)
           }
         });
     }
@@ -43,13 +49,24 @@ const Login = () => {
     <div class="container mt-5">
       <form onSubmit={handleSubmit}>
         <div class="form-group">
+          <label for="inputUsername">Username</label>
+          <input
+            name="username"
+            type="username"
+            class="form-control"
+            id="inputUsername"
+            value={username}
+            onChange={(event) => setUsername(event.target.value)}
+            placeholder="Enter username"
+          />
+        </div>
+        <div class="form-group">
           <label for="exampleInputEmail1">Email address</label>
           <input
             name="email"
             type="email"
             class="form-control"
             id="exampleInputEmail1"
-            aria-describedby="emailHelp"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             placeholder="Enter email"
@@ -67,32 +84,32 @@ const Login = () => {
             placeholder="Password"
           />
         </div>
-        {emailValidation === '' ? null : !emailValidation ? (
+        {emailValidation === "" ? null : !emailValidation ? (
           <div class="alert alert-danger" role="alert">
             Please key in a valid email
           </div>
         ) : null}
-        {pwValidation === '' ? null : !pwValidation ? (
+        {usernameValidation === "" ? null : !usernameValidation ? (
+          <div class="alert alert-danger" role="alert">
+            Please key in a valid username
+          </div>
+        ) : null}
+        {pwValidation === "" ? null : !pwValidation ? (
           <div class="alert alert-danger" role="alert">
             Please key in your password
           </div>
         ) : null}
-        {errorMessage ? (
+        {message ? (
           <div class="alert alert-danger" role="alert">
-            {errorMessage}
+            {message}
           </div>
         ) : null}
         <button type="submit" class="btn btn-primary btn-block mt-5">
-          Submit
+          Sign-Up
         </button>
-        <div>
-          <p>
-            Don't have an account? <Link to="/signup">Sign-Up</Link>
-          </p>
-        </div>
       </form>
     </div>
   );
 };
 
-export default Login;
+export default Signup;

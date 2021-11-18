@@ -3,6 +3,8 @@ const path = require('path')
 const cors = require('cors')
 const app = express()
 const usersController = require('./controllers/users')
+const categoriesController = require('./controllers/categories')
+const listingsController = require('./controllers/listings')
 const passport = require('passport')
 const initializePassport = require('./config/passport-setup')
 
@@ -16,6 +18,8 @@ app.use(cors())
 app.use(express.json({extended: true}))
 app.use(express.static(path.join(__dirname, "/client/build")))
 app.use('/api/users', usersController)
+app.use('/api/categories', categoriesController)
+app.use('/api/listings', listingsController)
 
 // * Routes
 app.get('*', (req,res) => {

@@ -6,8 +6,8 @@ const pool = require("../db");
 require('dotenv').config()
 
 const initializePassport = (passport) => {
-  passport.serializeUser((user, done) => done(null, user));
-  passport.deserializeUser((user, done) => done(null, user));
+  passport.serializeUser((user, done) => done(null, user, info));
+  passport.deserializeUser((user, done) => done(null, user, info));
 
   passport.use(
     new LocalStrategy(
@@ -18,13 +18,14 @@ const initializePassport = (passport) => {
           [username]
         );
         if (!userFound.rows[0]) {
-          done(null, false, { message: "No user with that email found" });
+          return done(null, false, { authenticated: false, message: "No user with that email found" });
         }
         try {
           if (bcrypt.compareSync(password, userFound.rows[0].password)) {
-            done(null, userFound.rows[0]);
+            return done(null, userFound.rows[0]);
           } else {
-            done(null, false, {
+            return done(null, false, {
+              authenticated: false, 
               message: "Password incorrect",
             });
           }
@@ -40,9 +41,9 @@ const initializePassport = (passport) => {
     secretOrKey: process.env.jwtSecret 
   }, (payload, done) => {
     try{
-      done(null, payload)
+      return done(null, payload)
     } catch (error) {
-      done(null, error)
+      return done(null, error)
     }
   }))
 };

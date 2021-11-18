@@ -1,4 +1,17 @@
+import {Link} from 'react-router-dom'
+import {useContext} from 'react'
+import { UserContext } from '../UserContext';
+import { useAuthenticate } from '../Store/UseAuthenticate';
+
 const Navbar = () => {
+  const userContext = useContext(UserContext)
+
+  useAuthenticate()
+
+  const logoutUser = () => {
+    localStorage.removeItem("token")
+    window.location.replace('/')
+  }
 
   return(   
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -14,27 +27,10 @@ const Navbar = () => {
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-      <a class="navbar-brand" href="#">
-        Hidden brand
-      </a>
-      <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">
-            Home <span class="sr-only">(current)</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">
-            Link
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" href="#">
-            Disabled
-          </a>
-        </li>
-      </ul>
-      <form class="form-inline my-2 my-lg-0">
+      <Link to='/'><div class="navbar-brand">
+        Logo Stuff
+      </div></Link>
+      <form class="form-inline my-2 my-lg-0 ml-auto">
         <input
           class="form-control mr-sm-2"
           type="search"
@@ -45,6 +41,9 @@ const Navbar = () => {
           Search
         </button>
       </form>
+      {userContext?.user?.authenticated ? <button class="btn btn-outline-success ml-2" onClick={logoutUser}>
+        Logout
+      </button> : null}
     </div>
   </nav>
   )
