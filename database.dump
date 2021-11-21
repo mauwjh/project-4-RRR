@@ -1,0 +1,316 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 14.1
+-- Dumped by pg_dump version 14.1
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: adminpack; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS adminpack WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION adminpack; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION adminpack IS 'administrative functions for PostgreSQL';
+
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: categories; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.categories (
+    id integer NOT NULL,
+    name character varying(50) NOT NULL
+);
+
+
+--
+-- Name: categories_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.categories_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: categories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.categories_id_seq OWNED BY public.categories.id;
+
+
+--
+-- Name: likes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.likes (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    listing_id integer NOT NULL
+);
+
+
+--
+-- Name: likes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.likes_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: likes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.likes_id_seq OWNED BY public.likes.id;
+
+
+--
+-- Name: listings; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.listings (
+    id integer NOT NULL,
+    title character varying(255) NOT NULL,
+    description character varying(200) NOT NULL,
+    category integer NOT NULL,
+    sale_option character varying(20) NOT NULL,
+    looking_for integer[],
+    img character varying(255) NOT NULL,
+    price integer,
+    creator_id integer DEFAULT 12 NOT NULL
+);
+
+
+--
+-- Name: listings_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.listings_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: listings_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.listings_id_seq OWNED BY public.listings.id;
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.users (
+    id integer NOT NULL,
+    username character varying(20) NOT NULL,
+    password character varying(200) NOT NULL,
+    email character varying(20) NOT NULL
+);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.users_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+--
+-- Name: categories id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.categories ALTER COLUMN id SET DEFAULT nextval('public.categories_id_seq'::regclass);
+
+
+--
+-- Name: likes id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.likes ALTER COLUMN id SET DEFAULT nextval('public.likes_id_seq'::regclass);
+
+
+--
+-- Name: listings id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.listings ALTER COLUMN id SET DEFAULT nextval('public.listings_id_seq'::regclass);
+
+
+--
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Data for Name: categories; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.categories (id, name) FROM stdin;
+1	Audio
+2	Babies & Kids
+3	Beauty & Personal Care
+4	Car Accessories
+5	Computers & Tech
+6	Food & Drinks
+7	Furniture
+8	Health & Nutrition
+9	Hobbies & Toys
+10	Lifestyle
+11	Mobile Phones & Gadgets
+12	Men's Fashion
+13	Pet Supplies
+14	Photography
+15	Property
+16	Sports
+17	TVs & Home Appliances
+18	Games
+19	Women's Fashion
+20	Everything Else
+\.
+
+
+--
+-- Data for Name: likes; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.likes (id, user_id, listing_id) FROM stdin;
+31	12	10
+44	13	11
+\.
+
+
+--
+-- Data for Name: listings; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.listings (id, title, description, category, sale_option, looking_for, img, price, creator_id) FROM stdin;
+1	Old Watch	This is an old watch	3	For Free	{1,4,5}	https://images.watch.com.invalid	25	12
+3	Old Watch	This is an old watch	3	For Free	\N	https://images.watch.com.invalid	25	12
+4	Studio Microphone	Used but not abused microphone up for barter	1	For Trade	{1,5,12}	https://images.unsplash.com/photo-1519874179391-3ebc752241dd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80	80	12
+5	Studio Monitors	Second-hand monitors. Audio drops in and out	1	For Free	{5,12}	https://images.unsplash.com/photo-1545454675-3531b543be5d?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3540&q=80	40	12
+6	Headphones	Cheap but functional headphones giving away for free	1	For Free	{12}	https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3540&q=80	\N	12
+7	Microphone	This microphone is great, it has served me well. Up to trade for another brand.	1	For Trade	{5}	https://images.unsplash.com/photo-1520444451380-ebe0f7b9cfd5?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3540&q=80	20	12
+8	Assorted Speakers	Assorted range of speakers. Some work and some do not. Come down to view.	1	For Trade	{12}	https://images.unsplash.com/photo-1609702847389-b8aec1b0b929?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3363&q=80	\N	12
+9	Overhead Microphone	This microphone is good. It is a good microphone. How good you ask? Very good	1	For Trade	{12}	https://images.unsplash.com/photo-1590602846989-e99596d2a6ee?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3540&q=80	80	12
+10	Grado Labs Headphones	Awesome pair of headphones from a reknown brand. Giving away for parts as one side no longer works	1	For Free	{1}	https://images.unsplash.com/photo-1483032469466-b937c425697b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3540&q=80	\N	12
+11	Aedle Headphones	Headphone from Aedle. Looking to trade for something else. Great condition.	1	For Trade	{1}	https://images.unsplash.com/photo-1484704849700-f032a568e944?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3540&q=80	90	12
+12	Audio-Technica Headphones	Awesome headphones from Audio-Technica. Willing to trade for whatever.	1	For Trade	{5,12}	https://images.unsplash.com/photo-1481207727306-1a9f151fca7d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3540&q=80	120	12
+\.
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.users (id, username, password, email) FROM stdin;
+1	Matt	Singapore	matt@test.com
+6	Matt2	Singapore	matt2@test.com
+9	Matt3	Singapore	matt3@test.com
+10	Matt4	$2b$10$8NNQHf8wsQM3wtSSNqKbA.JZxJQqyCWm6AWqYZyLzYW1lQA4r.nKa	matt4@test.com
+12	matt5	$2b$10$PogNVE/8fFqAxg4GYCE08.KMSpWxpAVgaldAnh91Nzyx6CyYMQtEi	matt5@test.com
+13	matt6	$2b$10$tZbYuBW2A7CVKsng/dYRp.V2H6YNfrbdxY5DwzIoWqU4aebSUQ7Ei	matt6@test.com
+14	matt7	$2b$10$lYg5CumUA06PW3hGaBvExufzu.3Q6BlDd0wS2kV2VS6ZSa5cSdpK6	matt7@test.com
+15	matt8	$2b$10$s4RyoRV/1DMHfcQOUEH9D.ER.eaKTZHp1hD4/Le/yH1o409MT8dhu	matt8@test.com
+20	matt9	$2b$10$xn4maw1ZgkD0XgoCeSa1iOkwEbjahFxnI.ZrCI50idtzzZuLG4O7q	matt9@test.com
+\.
+
+
+--
+-- Name: categories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.categories_id_seq', 20, true);
+
+
+--
+-- Name: likes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.likes_id_seq', 44, true);
+
+
+--
+-- Name: listings_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.listings_id_seq', 12, true);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.users_id_seq', 20, true);
+
+
+--
+-- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_email_key UNIQUE (email);
+
+
+--
+-- Name: users users_username_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_username_key UNIQUE (username);
+
+
+--
+-- PostgreSQL database dump complete
+--
+
