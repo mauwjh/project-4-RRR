@@ -11,7 +11,7 @@ const initializePassport = require('./config/passport-setup')
 
 //* Config
 initializePassport(passport)
-const port = 3001
+const port = process.env.PORT ?? 3001
 
 //* Middleware
 app.use(passport.initialize())
@@ -29,6 +29,6 @@ app.get('*', (req,res) => {
 })
 
 //*  Start server to listen
-app.listen(process.env.PORT || port, () => {
+app.listen(port, () => {
   console.log('listening on port', port)
 })
