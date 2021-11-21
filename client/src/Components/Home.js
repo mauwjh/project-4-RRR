@@ -1,25 +1,40 @@
 import Carousel from "./Carousel";
-import {useEffect, useState, useContext} from 'react'
-import {Link} from 'react-router-dom'
+import { useEffect, useState, useContext } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
-import {UserContext} from '../UserContext'
+import { UserContext } from "../UserContext";
 import { useAuthenticate } from "../Store/UseAuthenticate";
+import CategoriesCarousel from "./CategoriesCarousel";
 
 const Home = () => {
-  const [categoryList, setCategoryList] = useState([])
-  const categories = [1,5,12];
-  const userContext = useContext(UserContext)
+  const [categoryList, setCategoryList] = useState([]);
+  const [likes, setLikes] = useState([]);
+  const [recentListings, setRecentListings] = useState();
+  const [limit, setLimit] = useState(5)
+  const userContext = useContext(UserContext);
 
-  const getCategories = async () => {
-    const result = await axios.get('/api/categories')
-    setCategoryList(result.data.rows)
-  }
-
-  useAuthenticate()
+  useAuthenticate();
 
   useEffect(() => {
-    getCategories()
-  }, [])
+    const getCategories = async () => {
+      const result = await axios.get("/api/categories");
+      setCategoryList(result.data.rows);
+    };
+    getCategories();
+    const getRecentListings = async () => {
+      const result = await axios.get("/api/listings/recent");
+      setRecentListings(result.data.rows);
+    };
+    getRecentListings();
+    const getLikes = async () => {
+      const result = await axios.get(`/api/likes/${userContext.user.userId}`);
+      setLikes(result.data.rows);
+    };
+    if (userContext.user.userId) getLikes();
+  }, [userContext.user.userId]);
+
+  console.log(recentListings);
+  console.log(likes);
 
   return (
     <>
@@ -45,21 +60,63 @@ const Home = () => {
           <hr class="my-4" style={{ borderColor: "white" }} />
           <p>Find out more and connect with your barter buddy today</p>
           <p class="lead">
-            {userContext?.user?.authenticated ? null : <Link to ='/login'><a class="btn btn-info btn-md mr-2 mb-2" style={{width: '110px', boxShadow: 'none', outline: 'none'}} href="#asd" role="button">
-              Sign-In
-            </a></Link>}
-            <a class="btn btn-info btn-md mr-2 mb-2" style={{width: '110px', boxShadow: 'none', outline: 'none'}} href="#asd" role="button">
+            {userContext?.user?.authenticated ? null : (
+              <Link to="/login">
+                <a
+                  class="btn btn-info btn-md mr-2 mb-2"
+                  style={{ width: "110px", boxShadow: "none", outline: "none" }}
+                  href="#asd"
+                  role="button"
+                >
+                  Sign-In
+                </a>
+              </Link>
+            )}
+            <a
+              class="btn btn-info btn-md mr-2 mb-2"
+              style={{ width: "110px", boxShadow: "none", outline: "none" }}
+              href="#asd"
+              role="button"
+            >
               Learn more
             </a>
           </p>
         </div>
       </div>
+      <CategoriesCarousel data={categoryList} cols={4}/>
       <div class="container">
         <h2>Recommended For You</h2>
       </div>
-      {categoryList?.filter(x => categories.indexOf(x.id) !== -1)?.map((x) => (
-        <Carousel category={x.name} />
-      ))}
+      <Carousel
+        header="New Listings"
+        likes={likes}
+        data={recentListings}
+        cols={3}
+        setLikes={(listing) => setLikes(listing)}
+      />
+
+
+      <div class="container mb-5 d-md-none">
+        <h2 class="mb-3">Categories</h2>
+              <div
+                style={{
+                  fontSize: "15px",
+                  fontWeight: "normal",
+                  marginLeft: "5px",
+                  marginBottom: "15px"
+                }}
+                onClick={() => setLimit(categoryList.length)}
+              >
+                View All {">"}
+              </div>
+        <ul class="list-group">
+          {categoryList.slice(0, limit).map((x) => (
+            <li class="list-group-item" style={{ fontSize: "15px" }}>
+              <Link to={`/listings/${x.name}/${x.id}`}>{x.name}</Link>
+            </li>
+          ))}
+        </ul>
+      </div>
     </>
   );
 };

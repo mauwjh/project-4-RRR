@@ -12,7 +12,7 @@ require('dotenv').config()
 router.post('/login', loginCheck, async (req,res) => {
   try{
     const token = jwtGenerator(req.user.id, req.user.username, req.user.email)
-    res.json({token: token, authenticated: true})
+    res.json({token: token, authenticated: true, userId: req.user.id})
   } catch (error) {
     console.log(error)
     res.json({message: 'error'})
@@ -25,7 +25,7 @@ router.get('/logout', async (req,res) => {
 
 router.get('/authenticate', tokenCheck, async (req,res) => {
   try{
-    res.json({authenticated: true, username: req.user.username})
+    res.json({authenticated: true, userId: req.user.user})
   } catch (error) {
     console.log(error)
     res.json({message: 'error'})

@@ -31,6 +31,7 @@ const Login = () => {
           if (res.data.authenticated) {
             localStorage.setItem("token", res.data.token);
             userContext.setUser(res.data)
+            console.log(res.data)
             window.history.back()
           } else {
             setErrorMessage(res.data.message);

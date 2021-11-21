@@ -15,9 +15,11 @@ export const useAuthenticate = () => {
       .then((res) => {
         if(res.data.authenticated) {
           console.log(res.data)
-          setData(res.data)
+          if(userContext.user.userId !== res.data.userId){
+            console.log(res.data)
+            userContext.setUser(res.data)
+          }
         }
       });
-  }, []);
-  userContext.setUser(data)
+  }, [userContext, data]);
 };
