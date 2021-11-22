@@ -17,11 +17,11 @@ const port = process.env.PORT ?? 3001
 app.use(passport.initialize())
 app.use(cors())
 app.use(express.json({extended: true}))
-app.use(express.static(path.join(__dirname, "/client/build")))
 app.use('/api/users', usersController)
 app.use('/api/categories', categoriesController)
 app.use('/api/listings', listingsController)
 app.use('/api/likes', likesController)
+app.use(express.static(path.join(__dirname, "/client/build")))
 
 // * Routes
 app.get('*', (req,res) => {
