@@ -92,19 +92,48 @@ const Card = ({ data, likes, setLikes }) => {
 
   return (
     <div class="card">
-      <div class="card-header">
-        <div style={{ fontWeight: "bold" }}>{data.users_username}</div>
+      <div class="card-header" style={{ minHeight: "60px", height: "60px" }}>
+        <div
+          style={{ fontWeight: "bold", height: "100%" }}
+          class=" align-middle"
+        >
+          <i
+            class="fas fa-user-circle mr-3 align-middle mt-1"
+            style={{ fontSize: "30px" }}
+          ></i>
+          <div style={{ fontWeight: "normal" }} class="d-inline align-middle">
+            <Link to={`/account/${data.creator_id}`}>{data.users_username}</Link>
+          </div>
+        </div>
       </div>
-      <img
-        class="img-fluid"
-        style={{ objectFit: "cover", minHeight: "230px", maxHeight: "230px" }}
-        alt="100%x280"
-        src={data.img}
-      />
-      <div class="card-body" style={{ minHeight: "120px", maxHeight: "120px" }}>
-        <h4 class="card-title" style={{ fontSize: "18px" }}>
-          {data.title}
-        </h4>
+      <Link to={`/listings/${data.id}`}>
+        <img
+          class="img-fluid"
+          style={{
+            objectFit: "cover",
+            minHeight: "230px",
+            maxHeight: "230px",
+            boxSizing: "border-box",
+            width: "100%",
+          }}
+          alt="100%x280"
+          src={data.img[0]}
+        />
+      </Link>
+      <div
+        class="card-body"
+        style={{
+          minHeight: "120px",
+          maxHeight: "120px",
+          textDecoration: "none",
+          color: "black",
+        }}
+      >
+        <Link to={`/listings/${data.id}`}>
+          <h4 class="card-title" style={{ fontSize: "18px", color: "black" }}>
+            {data.title}
+          </h4>
+        </Link>
         <p class="card-text" style={{ maxHeight: "50px", fontSize: "17px" }}>
           {data.sale_option}
           <br />

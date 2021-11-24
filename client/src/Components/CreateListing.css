@@ -1,0 +1,9 @@
+.optionContainer li:hover,
+.optionContainer .highlight {
+  background: #ebebeb;
+  color: black;
+}
+
+label {
+  font-weight: 500;
+}

@@ -12,20 +12,27 @@ require('dotenv').config()
 router.post('/login', loginCheck, async (req,res) => {
   try{
     const token = jwtGenerator(req.user.id, req.user.username, req.user.email)
-    res.json({token: token, authenticated: true, userId: req.user.id})
+    res.json({token: token, authenticated: true, userId: req.user.id, username:req.user.username})
   } catch (error) {
     console.log(error)
     res.json({message: 'error'})
   }
 })
 
-router.get('/logout', async (req,res) => {
-
-})
 
 router.get('/authenticate', tokenCheck, async (req,res) => {
   try{
-    res.json({authenticated: true, userId: req.user.user})
+    res.json({authenticated: true, userId: req.user.user, username:req.user.username})
+  } catch (error) {
+    console.log(error)
+    res.json({message: 'error'})
+  }
+})
+
+router.get('/:id', async (req,res) => {
+  try{
+    const result = await pool.query("SELECT * FROM users WHERE id = $1", [req.params.id])
+    res.json(result)
   } catch (error) {
     console.log(error)
     res.json({message: 'error'})

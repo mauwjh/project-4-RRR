@@ -41,7 +41,7 @@ const AllListings = () => {
         ))}
       </div>
       <div class='row mt-4'>
-        <button class='btn btn-info btn-md mr-auto ml-auto' onClick={() => setLimit(limit+8)}>Show more</button>
+        <button class='btn btn-info btn-md mr-auto ml-auto' style={{boxShadow: "none", outline: "none"}} onClick={() => setLimit(limit+8)}>Show more</button>
       </div>
     </div>
   );

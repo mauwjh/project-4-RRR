@@ -63,7 +63,7 @@ const Home = () => {
             {userContext?.user?.authenticated ? null : (
               <Link to="/login">
                 <a
-                  class="btn btn-info btn-md mr-2 mb-2"
+                  class="btn btn-primary btn-md mr-2 mb-2"
                   style={{ width: "110px", boxShadow: "none", outline: "none" }}
                   href="#asd"
                   role="button"
@@ -73,7 +73,7 @@ const Home = () => {
               </Link>
             )}
             <a
-              class="btn btn-info btn-md mr-2 mb-2"
+              class="btn btn-primary btn-md mr-2 mb-2"
               style={{ width: "110px", boxShadow: "none", outline: "none" }}
               href="#asd"
               role="button"
@@ -83,7 +83,7 @@ const Home = () => {
           </p>
         </div>
       </div>
-      <CategoriesCarousel data={categoryList} cols={4}/>
+
       <div class="container">
         <h2>Recommended For You</h2>
       </div>
@@ -95,6 +95,7 @@ const Home = () => {
         setLikes={(listing) => setLikes(listing)}
       />
 
+      <CategoriesCarousel data={categoryList} cols={6}/> 
 
       <div class="container mb-5 d-md-none">
         <h2 class="mb-3">Categories</h2>
@@ -111,12 +112,19 @@ const Home = () => {
               </div>
         <ul class="list-group">
           {categoryList.slice(0, limit).map((x) => (
-            <li class="list-group-item" style={{ fontSize: "15px" }}>
-              <Link to={`/listings/${x.name}/${x.id}`}>{x.name}</Link>
-            </li>
+            <Link to={`/listings/${x.name}/${x.id}`}><li class="list-group-item" style={{ fontSize: "15px" }}>
+              {x.name}
+            </li></Link>
           ))}
         </ul>
       </div>
+      <Carousel
+        header="Most Liked"
+        likes={likes}
+        data={recentListings}
+        cols={4}
+        setLikes={(listing) => setLikes(listing)}
+      />
     </>
   );
 };

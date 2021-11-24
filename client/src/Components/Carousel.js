@@ -25,7 +25,7 @@ const Carousel = ({ header, data, cols, likes, setLikes }) => {
       <div class={`carousel-item ${i === 0 ? "active" : null}`}>
         <div class="row">
           {sortedData[i].map((a) => (
-            <div class={`col-md-${12/cols} mb-4`}>
+            <div class={`col-lg-${12/cols} mb-4`}>
               <Card data={a} likes={likes} setLikes={setLikes}/>
             </div>
           ))}

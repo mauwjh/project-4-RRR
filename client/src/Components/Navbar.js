@@ -30,6 +30,9 @@ const Navbar = () => {
       <Link to='/'><div class="navbar-brand">
         Logo Stuff
       </div></Link>
+      <Link to='/listings/new'><button class="btn btn-outline-success ml-2">
+        Trade an Item
+      </button></Link>
       <form class="form-inline my-2 my-lg-0 ml-auto">
         <input
           class="form-control mr-sm-2"

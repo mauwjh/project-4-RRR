@@ -6,6 +6,9 @@ import Login from "./Components/Login";
 import Home from "./Components/Home";
 import Signup from "./Components/Signup";
 import AllListings from "./Components/AllListings";
+import CreateListing from "./Components/CreateListing";
+import ViewListing from "./Components/ViewListing";
+import Account from "./Components/Account";
 // import { useAuthenticate } from './Store/UseAuthenticate';
 
 function App() {
@@ -19,6 +22,9 @@ function App() {
           <Route path="" element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<Signup />} />
+          <Route path="account/:id" element={<Account />} />
+          <Route path="listings/new" element={<CreateListing />} />
+          <Route path="listings/:id" element={<ViewListing />} />
           <Route path="listings/:category/:cid" element={<AllListings />} />
         </Routes>
       </div>

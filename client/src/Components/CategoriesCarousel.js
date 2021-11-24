@@ -50,7 +50,7 @@ const CategoriesCarousel = ({ data, cols }) => {
                   <div class={`carousel-item ${i === 0 ? "active" : null}`}>
                     <div class="row">
                       {sortedData[i].map((a) => (
-                        <div class={`col-md-3 mb-4 text-center`}><Link to={`/listings/${a.name}/${a.id}`}>{a.name}</Link></div>
+                        <div class={`col-md-2 mb-4 text-center`}><Link to={`/listings/${a.name}/${a.id}`}><span  style={{color: 'black'}}>{a.name}</span></Link></div>
                       ))}
                     </div>
                   </div>
