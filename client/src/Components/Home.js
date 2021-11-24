@@ -1,9 +1,8 @@
 import Carousel from "./Carousel";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { UserContext } from "../UserContext";
-import { useAuthenticate } from "../Store/UseAuthenticate";
 import CategoriesCarousel from "./CategoriesCarousel";
 
 const Home = () => {
@@ -11,9 +10,7 @@ const Home = () => {
   const [likes, setLikes] = useState([]);
   const [recentListings, setRecentListings] = useState();
   const [limit, setLimit] = useState(5)
-  const userContext = useContext(UserContext);
-
-  useAuthenticate();
+  const {user} = UserContext();
 
   useEffect(() => {
     const getCategories = async () => {
@@ -27,11 +24,11 @@ const Home = () => {
     };
     getRecentListings();
     const getLikes = async () => {
-      const result = await axios.get(`/api/likes/${userContext.user.userId}`);
+      const result = await axios.get(`/api/likes/${user.userId}`);
       setLikes(result.data.rows);
     };
-    if (userContext.user.userId) getLikes();
-  }, [userContext.user.userId]);
+    if (user.userId) getLikes();
+  }, [user.userId]);
 
   console.log(recentListings);
   console.log(likes);
@@ -60,7 +57,7 @@ const Home = () => {
           <hr class="my-4" style={{ borderColor: "white" }} />
           <p>Find out more and connect with your barter buddy today</p>
           <p class="lead">
-            {userContext?.user?.authenticated ? null : (
+            {user?.authenticated ? null : (
               <Link to="/login">
                 <a
                   class="btn btn-primary btn-md mr-2 mb-2"
@@ -91,6 +88,7 @@ const Home = () => {
         header="New Listings"
         likes={likes}
         data={recentListings}
+        setData={(x) => setRecentListings(recentListings.filter(y => y.id !== x))}
         cols={3}
         setLikes={(listing) => setLikes(listing)}
       />
@@ -122,6 +120,7 @@ const Home = () => {
         header="Most Liked"
         likes={likes}
         data={recentListings}
+        setData={(x) => setRecentListings(recentListings.filter(y => y.id !== x))}
         cols={4}
         setLikes={(listing) => setLikes(listing)}
       />

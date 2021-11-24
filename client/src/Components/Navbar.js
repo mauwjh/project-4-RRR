@@ -1,12 +1,8 @@
 import {Link} from 'react-router-dom'
-import {useContext} from 'react'
 import { UserContext } from '../UserContext';
-import { useAuthenticate } from '../Store/UseAuthenticate';
 
 const Navbar = () => {
-  const userContext = useContext(UserContext)
-
-  useAuthenticate()
+  const {user} = UserContext()
 
   const logoutUser = () => {
     localStorage.removeItem("token")
@@ -44,7 +40,7 @@ const Navbar = () => {
           Search
         </button>
       </form>
-      {userContext?.user?.authenticated ? <button class="btn btn-outline-success ml-2" onClick={logoutUser}>
+      {user?.authenticated ? <button class="btn btn-outline-success ml-2" onClick={logoutUser}>
         Logout
       </button> : null}
     </div>

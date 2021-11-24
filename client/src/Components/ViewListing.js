@@ -1,6 +1,5 @@
 import axios from "axios";
-import { authorize } from "passport";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../UserContext";
 import Card from "./Card";
@@ -8,7 +7,7 @@ import Card from "./Card";
 const ViewListing = () => {
   const [listing, setListing] = useState();
   const navigate = useNavigate();
-  const userContext = useContext(UserContext);
+  const {user} = UserContext()
   const [likes, setLikes] = useState();
   const [listingLikes, setListingLikes] = useState();
   const [categoryList, setCategoryList] = useState();
@@ -40,21 +39,21 @@ const ViewListing = () => {
     };
     if (listing?.categories_id) getSimilarListings();
     const getLikes = async () => {
-      const result = await axios.get(`/api/likes/${userContext.user.userId}`);
+      const result = await axios.get(`/api/likes/${user.userId}`);
       setLikes(result.data.rows);
     };
-    if (userContext.user.userId) getLikes();
-  }, [id, listing?.id, userContext.user.userId, listing?.categories_id]);
+    if (user.userId) getLikes();
+  }, [id, listing?.id, user.userId, listing?.categories_id]);
 
   console.log(listing);
 
   const like = () => {
-    if (!userContext?.user?.authenticated) {
+    if (!user?.authenticated) {
       navigate("/login");
-    } else if (userContext.user.authenticated) {
+    } else if (user.authenticated) {
       axios
         .post("/api/likes/", {
-          user_id: userContext?.user?.userId,
+          user_id: user?.userId,
           listing_id: listing.id,
         })
         .then((res) => {
@@ -65,13 +64,13 @@ const ViewListing = () => {
   };
 
   const unlike = () => {
-    if (!userContext?.user?.authenticated) {
+    if (!user?.authenticated) {
       navigate("/login");
-    } else if (userContext.user.authenticated) {
+    } else if (user.authenticated) {
       axios
         .delete("/api/likes/delete", {
           data: {
-            user_id: userContext?.user?.userId,
+            user_id: user?.userId,
             listing_id: listing.id,
           },
         })
@@ -287,6 +286,7 @@ const ViewListing = () => {
             <div class={`col-lg-3 mb-3`}>
               <Card
                 data={x}
+                setData={(a) => setSimilarListings(similarListings.filter(b => b.id !== a))}
                 likes={likes}
                 setLikes={(likes) => setLikes(likes)}
               />

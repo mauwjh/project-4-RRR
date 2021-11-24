@@ -1,14 +1,14 @@
 import { UserContext } from "../UserContext";
-import React, { useContext, useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import { useParams } from "react-router";
 import axios from "axios";
 import Card from "./Card";
 
-const Account = () => {
+const Account = ({authenticated}) => {
   const [likes, setLikes] = useState();
-  const [user, setUser] = useState();
+  const [userdb, setUser] = useState();
   const [listings, setListings] = useState();
-  const userContext = useContext(UserContext);
+  const {user} = UserContext();
   const { id } = useParams();
 
   useEffect(() => {
@@ -23,11 +23,11 @@ const Account = () => {
     };
     getListings();
     const getLikes = async () => {
-      const result = await axios.get(`/api/likes/${userContext.user.userId}`);
+      const result = await axios.get(`/api/likes/${user.userId}`);
       setLikes(result.data.rows);
     };
-    if (userContext.user.userId) getLikes();
-  }, [id, userContext.user.userId]);
+    if (user.userId) getLikes();
+  }, [id, user.userId]);
 
   console.log(listings);
 
@@ -39,7 +39,7 @@ const Account = () => {
             class="fas fa-user-circle col-12 text-center"
             style={{ fontSize: "70px" }}
           ></i>
-          <h1 class="col-12 text-center mt-3">{user?.username}</h1>
+          <h1 class="col-12 text-center mt-3">{userdb?.username}</h1>
         </div>
       </div>
       <h3 class="mb-4">Listings</h3>
@@ -48,6 +48,7 @@ const Account = () => {
           <div class={`col-lg-3 mb-3`}>
             <Card
               data={x}
+              setData={a => setListings(listings.filter(b => b.id !== a))}
               likes={likes}
               setLikes={(likes) => setLikes(likes)}
             />

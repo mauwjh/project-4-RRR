@@ -6,7 +6,7 @@ exports.tokenCheck = (req,res,next) => {
       return res.json(err)
     }
     if(!user) {
-      return res.json({authentication: false, message: 'invalid token'})
+      return res.json({authenticated: false, message: 'invalid token'})
     }
     req.user = user
     next()

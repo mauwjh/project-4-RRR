@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useDropzone } from "react-dropzone";
 import { Formik, Form, Field } from "formik";
 import { UserContext } from "../UserContext";
@@ -7,15 +7,15 @@ import { Multiselect } from "multiselect-react-dropdown";
 import "./CreateListing.css";
 import axios from "axios";
 
-const CreateListing = ({authenticated}) => {
+const EditListing = ({authenticated, userId}) => {
+  const [listing, setListing] = useState()
+  const [storedImg, setStoredImg] = useState()
+  const [displayedImg, setDisplayedImg] = useState()
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [multiselectData, setMultiselectData] = useState([]);
   const {user} = UserContext()
   const navigate = useNavigate();
-  
-  if(!authenticated) {
-    navigate('/login')
-  }
+  const {id} = useParams()
   
   useEffect(() => {
     const getCategories = async () => {
@@ -23,10 +23,17 @@ const CreateListing = ({authenticated}) => {
       setMultiselectData(data.rows);
     };
     getCategories();
-  }, [navigate, user]);
-  console.log(multiselectData);
-
-
+    const getListing = async () => {
+      const {data} = await axios.get(`/api/listings/${id}`)
+      if(data.rows[0].creator_id !== userId) {
+        navigate('/login')
+      }
+      setListing(data.rows[0])
+      setStoredImg(data.rows[0].img)
+      setDisplayedImg(data.rows[0].img)
+    }
+    getListing()
+  }, [navigate, user, id, userId]);
 
   const uploadCloudinary = async () => {
     const responses = [];
@@ -44,7 +51,7 @@ const CreateListing = ({authenticated}) => {
       });
       responses.push(await response.json());
     }
-    return responses;
+    return [...storedImg, ...responses.map((x) => x.secure_url)];
   };
 
   const onDrop = useCallback(
@@ -62,21 +69,19 @@ const CreateListing = ({authenticated}) => {
   });
 
   const postForm = async (values) => {
-    console.log(values);
     const cloudinary = await uploadCloudinary();
-    const res = await axios.post("/api/listings/", {
+    const res = await axios.put(`/api/listings/edit/${listing.id}`, {
       title: values.title,
       description: values.description,
       category: values.category,
       saleOption: values.saleOption,
       lookingFor: values.lookingFor ? values.lookingFor : null,
-      img: cloudinary.map((x) => x.secure_url),
+      img: cloudinary,
       price: values.price ? values.price : null,
       creatorId: user.userId,
     });
-    console.log(res);
     if (res.status === 200) {
-      navigate(`/listings/${res.data.rows[0].id}`)
+      navigate(`/listings/${listing.id}`)
     }
   };
 
@@ -106,12 +111,16 @@ const CreateListing = ({authenticated}) => {
   };
   //* Validations
 
+  if(!authenticated) {
+    navigate('/login')
+  }
+
   return (
     <div class="container mt-4 mb-5">
       <h2>Create a New Listing</h2>
       <h5 class="mt-4">Images</h5>
       <p style={{ fontSize: "15px" }}>(max 3 files)</p>
-      {uploadedFiles?.length < 3 ? (
+      {storedImg?.length + uploadedFiles?.length < 3 ? (
         <div
           {...getRootProps()}
           class="text-center mb-4"
@@ -129,6 +138,28 @@ const CreateListing = ({authenticated}) => {
       ) : null}
       <div class="col-12">
         <div class="row">
+          {storedImg?.map((image, index) => (
+            <div class="col-sm-4 mb-4">
+              <div
+                class="position-absolute"
+                onClick={() => {
+                  setStoredImg(storedImg.filter(a => a !== image))
+                }
+                }
+                style={{ top: "7px", left: "40px", zIndex: 1 }}
+              >
+                <i
+                  class="fas fa-times"
+                  style={{ fontSize: "25px", color: "#495057" }}
+                ></i>
+              </div>
+              <img
+                src={image}
+                alt="120x140"
+                class="col-12"
+              />
+            </div>
+          ))}
           {uploadedFiles?.map((image, index) => (
             <div class="col-sm-4 mb-4">
               <div
@@ -154,17 +185,17 @@ const CreateListing = ({authenticated}) => {
       </div>
 
       <Formik
+        enableReinitialize
         initialValues={{
-          title: "",
-          description: "",
-          saleOption: "",
-          lookingFor: "",
-          category: "",
-          price: "",
+          title: listing?.title,
+          description: listing?.description,
+          saleOption: listing?.sale_option,
+          lookingFor: listing?.looking_for,
+          category: listing?.categories_id,
+          price: listing?.price,
         }}
         onSubmit={(values) => {
           // same shape as initial values
-          console.log(values);
           postForm(values);
         }}
       >
@@ -181,14 +212,14 @@ const CreateListing = ({authenticated}) => {
               Title
             </label>
             <span class="ml-2" style={{ fontSize: "14px", color: "#495057" }}>
-              {values.title.length} / 35
+              {values?.title?.length} / 35
             </span>
             <Field
               id="title"
               name="title"
               class="form-control"
               onChange={handleChange}
-              value={values.title}
+              value={values?.title}
               validate={validateTitle}
               maxLength="35"
             />
@@ -202,7 +233,7 @@ const CreateListing = ({authenticated}) => {
               Description
             </label>
             <span class="ml-2" style={{ fontSize: "14px", color: "#495057" }}>
-              {values.description.length} / 200
+              {values?.description?.length} / 200
             </span>
             <Field
               component="textarea"
@@ -210,7 +241,7 @@ const CreateListing = ({authenticated}) => {
               name="description"
               class="form-control"
               onChange={handleChange}
-              value={values.description}
+              value={values?.description}
               validate={validateDescription}
               maxLength="200"
             />
@@ -235,6 +266,7 @@ const CreateListing = ({authenticated}) => {
                 options: { color: "black" },
               }}
               singleSelect
+              selectedValues={[{name: listing?.sale_option}]}
             />
 
             <label htmlFor="category" class="mt-3">
@@ -253,6 +285,7 @@ const CreateListing = ({authenticated}) => {
                 options: { color: "black" },
               }}
               singleSelect
+              selectedValues={[{id: listing?.categories_id, name: listing?.categories_name}]}
             />
             {errors.category && touched.category && (
               <div>{errors.category}</div>
@@ -268,7 +301,7 @@ const CreateListing = ({authenticated}) => {
                 setFieldValue(
                   "lookingFor",
                   selectedList.map((x) => x.id)
-                );
+                  );
               }}
               onRemove={(selectedList) => {
                 setFieldValue(
@@ -282,6 +315,7 @@ const CreateListing = ({authenticated}) => {
                 chips: { background: "#43aa8b" },
                 options: { color: "black" },
               }}
+              selectedValues={listing?.looking_for.map(x => multiselectData?.filter(y => y.id === x)[0])}
             />
             <label htmlFor="price" class="mt-3">
               Estimated Price
@@ -316,4 +350,4 @@ const CreateListing = ({authenticated}) => {
   );
 };
 
-export default CreateListing;
+export default EditListing;

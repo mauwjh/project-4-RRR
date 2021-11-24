@@ -1,18 +1,15 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import axios from "axios";
 import { UserContext } from "../UserContext";
 import Card from "./Card";
-import { useAuthenticate } from "../Store/UseAuthenticate";
 
 const AllListings = () => {
-  const userContext = useContext(UserContext);
+  const {user} = UserContext()
   const { category, cid } = useParams();
   const [listings, setListings] = useState();
   const [likes, setLikes] = useState();
   const [limit, setLimit] = useState(8)
-
-  useAuthenticate()
 
   useEffect(() => {
     const getListings = async () => {
@@ -21,22 +18,22 @@ const AllListings = () => {
     };
     getListings();
     const getLikes = async () => {
-      const result = await axios.get(`/api/likes/${userContext.user.userId}`);
+      const result = await axios.get(`/api/likes/${user.userId}`);
       setLikes(result.data.rows);
     };
-    if (userContext.user.userId) getLikes();
-  }, [cid, userContext.user.userId, limit]);
+    if (user.userId) getLikes();
+  }, [cid, user.userId, limit]);
 
   console.log(listings);
   console.log(likes)
 
   return (
     <div class="container mt-4 mb-5">
-      <h2 class='mb-3'>Listings in {category}</h2>
+      <h2 class='mb-4'>Listings in {category}</h2>
       <div class="row">
         {listings?.map((x) => (
-          <div class={`col-md-3 mb-3`}>
-            <Card data={x} likes={likes} setLikes={(likes) => setLikes(likes)} />
+          <div class={`col-lg-3 mb-3`}>
+            <Card data={x} setData={a => setListings(listings.filter(b => b.id !== a))} likes={likes} setLikes={(likes) => setLikes(likes)} />
           </div>
         ))}
       </div>

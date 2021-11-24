@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import {UserContext} from '../UserContext'
 
@@ -9,7 +9,7 @@ const Login = () => {
   const [emailValidation, setEmailValidation] = useState("");
   const [pwValidation, setPwValidation] = useState("");
   const [errorMessage, setErrorMessage] = useState();
-  const userContext = useContext(UserContext)
+  const {setUser} = UserContext()
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -30,7 +30,7 @@ const Login = () => {
           console.log(res);
           if (res.data.authenticated) {
             localStorage.setItem("token", res.data.token);
-            userContext.setUser(res.data)
+            setUser(res.data)
             console.log(res.data)
             window.history.back()
           } else {

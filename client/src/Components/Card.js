@@ -1,11 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
 import axios from "axios";
 
-const Card = ({ data, likes, setLikes }) => {
+const Card = ({ data, likes, setLikes, setData }) => {
   const navigate = useNavigate();
-  const userContext = useContext(UserContext);
+  const { user } = UserContext();
   const [listingLikes, setListingLikes] = useState();
 
   useEffect(() => {
@@ -16,13 +16,19 @@ const Card = ({ data, likes, setLikes }) => {
     getListingLikes();
   }, [data.id]);
 
+  const deleteListing = async () => {
+    const res = await axios.delete(`/api/listings/${data.id}`)
+    setData(data.id)
+    console.log(res)
+  }
+  
   const like = () => {
-    if (!userContext?.user?.authenticated) {
+    if (!user?.authenticated) {
       navigate("/login");
-    } else if (userContext.user.authenticated) {
+    } else if (user.authenticated) {
       axios
         .post("/api/likes/", {
-          user_id: userContext?.user?.userId,
+          user_id: user?.userId,
           listing_id: data.id,
         })
         .then((res) => {
@@ -34,13 +40,13 @@ const Card = ({ data, likes, setLikes }) => {
   };
 
   const unlike = () => {
-    if (!userContext?.user?.authenticated) {
+    if (!user?.authenticated) {
       navigate("/login");
-    } else if (userContext.user.authenticated) {
+    } else if (user.authenticated) {
       axios
         .delete("/api/likes/delete", {
           data: {
-            user_id: userContext?.user?.userId,
+            user_id: user?.userId,
             listing_id: data.id,
           },
         })
@@ -67,7 +73,10 @@ const Card = ({ data, likes, setLikes }) => {
       );
     } else if (likes?.map((a) => a.listing_id).indexOf(data.id) !== -1) {
       return (
-        <div class="card-body">
+        <div
+          class="col-9"
+          style={{ display: "flex", alignItems: "center", paddingLeft: "20px" }}
+        >
           <i
             class="fas fa-heart"
             onClick={unlike}
@@ -78,7 +87,10 @@ const Card = ({ data, likes, setLikes }) => {
       );
     } else {
       return (
-        <div class="card-body">
+        <div
+          class="col-9"
+          style={{ display: "flex", alignItems: "center", paddingLeft: "20px" }}
+        >
           <i
             class="far fa-heart"
             onClick={like}
@@ -90,19 +102,57 @@ const Card = ({ data, likes, setLikes }) => {
     }
   };
 
+  const dropdown = () => {
+    if(user.userId === data.creator_id) {
+      return(
+      <div class="dropdown col-3 text-right" style={{ padding: 0, paddingRight: 8}}>
+      <button
+        class="btn"
+        type='button'
+        id="dropdownMenuButton1"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+        style={{ boxShadow: "none", outline: "none" }}
+      >
+        <i class="fas fa-ellipsis-v"></i>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
+        <li>
+          <Link to={`/listings/edit/${data.id}`} style={{color: 'black', textDecoration: 'none'}}><div  class="dropdown-item">
+            Edit
+          </div></Link>
+        </li>
+        <li>
+          <button class="dropdown-item" onClick={() => deleteListing()}>
+            Delete
+          </button>
+        </li>
+      </ul>
+    </div>
+      )
+    }
+  }
+
   return (
     <div class="card">
       <div class="card-header" style={{ minHeight: "60px", height: "60px" }}>
         <div
-          style={{ fontWeight: "bold", height: "100%" }}
-          class=" align-middle"
+          style={{
+            fontWeight: "bold",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+          }}
+          class="row"
         >
-          <i
-            class="fas fa-user-circle mr-3 align-middle mt-1"
-            style={{ fontSize: "30px" }}
-          ></i>
-          <div style={{ fontWeight: "normal" }} class="d-inline align-middle">
-            <Link to={`/account/${data.creator_id}`}>{data.users_username}</Link>
+          <i class="fas fa-user-circle col-1" style={{ fontSize: "30px" }}></i>
+          <div style={{ fontWeight: "normal", paddingLeft: 25 }} class="col-10">
+            <Link
+              to={`/account/${data.creator_id}`}
+              style={{ fontSize: "18px", lineHeight: "18px" }}
+            >
+              {data.users_username}
+            </Link>
           </div>
         </div>
       </div>
@@ -143,7 +193,12 @@ const Card = ({ data, likes, setLikes }) => {
           </Link>
         </p>
       </div>
-      {likeIcon()}
+      <div class="col-12 mt-3 mb-2" style={{minHeight: '38px'}}>
+        <div class="row" style={{display: 'flex'}}>
+          {likeIcon()}
+          {dropdown()}
+        </div>
+      </div>
     </div>
   );
 };

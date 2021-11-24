@@ -1,6 +1,6 @@
 import Card from "./Card";
 
-const Carousel = ({ header, data, cols, likes, setLikes }) => {
+const Carousel = ({ header, data, cols, likes, setLikes, setData }) => {
   let sortedData = [];
 
   for (let i = 0; i < data?.length; i++) {
@@ -26,7 +26,7 @@ const Carousel = ({ header, data, cols, likes, setLikes }) => {
         <div class="row">
           {sortedData[i].map((a) => (
             <div class={`col-lg-${12/cols} mb-4`}>
-              <Card data={a} likes={likes} setLikes={setLikes}/>
+              <Card data={a} likes={likes} setLikes={setLikes} setData={setData}/>
             </div>
           ))}
         </div>
