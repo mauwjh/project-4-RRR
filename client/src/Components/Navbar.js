@@ -48,7 +48,7 @@ const Navbar = () => {
               {user?.authenticated ? (
                 <Link to={`/`}><div class="nav-link" onClick={logoutUser}>
                   Logout
-                </div></Link
+                </div></Link>
               ) : <Link to={`/login`}><div class="nav-link">
               Sign-in
             </div></Link>}
