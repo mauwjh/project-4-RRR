@@ -7,7 +7,6 @@ const Navbar = () => {
 
   const logoutUser = () => {
     localStorage.removeItem("token");
-    window.location.replace("/");
   };
 
   return (
@@ -47,9 +46,9 @@ const Navbar = () => {
             </li>
             <li class="nav-item ">
               {user?.authenticated ? (
-                <div class="nav-link" onClick={logoutUser}>
+                <Link to={`/`}><div class="nav-link" onClick={logoutUser}>
                   Logout
-                </div>
+                </div></Link
               ) : <Link to={`/login`}><div class="nav-link">
               Sign-in
             </div></Link>}
