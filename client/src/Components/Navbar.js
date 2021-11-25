@@ -7,6 +7,7 @@ const Navbar = () => {
 
   const logoutUser = () => {
     localStorage.removeItem("token");
+    window.location.replace("/");
   };
 
   return (
@@ -46,9 +47,9 @@ const Navbar = () => {
             </li>
             <li class="nav-item ">
               {user?.authenticated ? (
-                <Link to={`/`}><div class="nav-link" onClick={logoutUser}>
+                <div class="nav-link" onClick={logoutUser} style={{cursor: 'pointer'}}>
                   Logout
-                </div></Link>
+                </div>
               ) : <Link to={`/login`}><div class="nav-link">
               Sign-in
             </div></Link>}

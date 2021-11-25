@@ -39,7 +39,7 @@ const ViewListing = () => {
     if (listing?.id) getListingLikes();
     const getSimilarListings = async () => {
       const { data } = await axios.get(
-        `/api/listings/categories/${listing.categories_id}/12`
+        `/api/listings/categories/${listing.categories_id}/8`
       );
       setSimilarListings(data.rows);
     };
