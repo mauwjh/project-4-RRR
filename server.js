@@ -6,6 +6,7 @@ const usersController = require('./controllers/users')
 const categoriesController = require('./controllers/categories')
 const listingsController = require('./controllers/listings')
 const likesController = require('./controllers/likes')
+const offersController = require('./controllers/offers')
 const passport = require('passport')
 const initializePassport = require('./config/passport-setup')
 
@@ -21,6 +22,7 @@ app.use('/api/users', usersController)
 app.use('/api/categories', categoriesController)
 app.use('/api/listings', listingsController)
 app.use('/api/likes', likesController)
+app.use('/api/offers', offersController)
 app.use(express.static(path.join(__dirname, "/client/build")))
 
 // * Routes

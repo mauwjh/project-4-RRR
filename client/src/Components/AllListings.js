@@ -29,7 +29,7 @@ const AllListings = () => {
 
   return (
     <div class="container mt-4 mb-5">
-      <h2 class='mb-4'>Listings in {category}</h2>
+      <h2 class='mb-4'>{category} Listings</h2>
       <div class="row">
         {listings?.map((x) => (
           <div class={`col-lg-3 mb-3`}>
@@ -38,7 +38,7 @@ const AllListings = () => {
         ))}
       </div>
       <div class='row mt-4'>
-        <button class='btn btn-info btn-md mr-auto ml-auto' style={{boxShadow: "none", outline: "none"}} onClick={() => setLimit(limit+8)}>Show more</button>
+        <button class='btn btn-primary btn-md mr-auto ml-auto' style={{boxShadow: "none", outline: "none"}} onClick={() => setLimit(limit+8)}>Show more</button>
       </div>
     </div>
   );

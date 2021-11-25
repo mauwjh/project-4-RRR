@@ -4,15 +4,24 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { UserContext } from "../UserContext";
 import CategoriesCarousel from "./CategoriesCarousel";
+import Card from "./Card";
 
 const Home = () => {
   const [categoryList, setCategoryList] = useState([]);
+  const [audioListings, setAudioListings] = useState()
+  const [audioLimit, setAudioLimit] = useState(6)
   const [likes, setLikes] = useState([]);
   const [recentListings, setRecentListings] = useState();
+  const [mostLiked, setMostLiked] = useState()
   const [limit, setLimit] = useState(5)
   const {user} = UserContext();
 
   useEffect(() => {
+    const getListings = async () => {
+      const { data } = await axios.get(`/api/listings/categories/1/${audioLimit}`);
+      setAudioListings(data.rows);
+    };
+    getListings();
     const getCategories = async () => {
       const result = await axios.get("/api/categories");
       setCategoryList(result.data.rows);
@@ -28,10 +37,12 @@ const Home = () => {
       setLikes(result.data.rows);
     };
     if (user.userId) getLikes();
-  }, [user.userId]);
-
-  console.log(recentListings);
-  console.log(likes);
+    const getMostLiked = async () => {
+      const result = await axios.get(`api/likes/mostLiked/12`)
+      setMostLiked(result.data.rows)
+    }
+    getMostLiked()
+  }, [user.userId, audioLimit]);
 
   return (
     <>
@@ -69,14 +80,17 @@ const Home = () => {
                 </a>
               </Link>
             )}
+              <Link to="/aboutus">
             <a
               class="btn btn-primary btn-md mr-2 mb-2"
               style={{ width: "110px", boxShadow: "none", outline: "none" }}
               href="#asd"
               role="button"
             >
-              Learn more
+              About Us
+
             </a>
+            </Link>
           </p>
         </div>
       </div>
@@ -85,12 +99,13 @@ const Home = () => {
         <h2>Recommended For You</h2>
       </div>
       <Carousel
-        header="New Listings"
+        header="Most Recent"
         likes={likes}
         data={recentListings}
         setData={(x) => setRecentListings(recentListings.filter(y => y.id !== x))}
         cols={3}
         setLikes={(listing) => setLikes(listing)}
+        search='recent'
       />
 
       <CategoriesCarousel data={categoryList} cols={6}/> 
@@ -116,14 +131,30 @@ const Home = () => {
           ))}
         </ul>
       </div>
+      {console.log(mostLiked)}
       <Carousel
         header="Most Liked"
         likes={likes}
-        data={recentListings}
-        setData={(x) => setRecentListings(recentListings.filter(y => y.id !== x))}
+        data={mostLiked}
+        setData={(x) => setMostLiked(recentListings.filter(y => y.id !== x))}
         cols={4}
         setLikes={(listing) => setLikes(listing)}
+        search='liked'
       />
+    <div class="container mt-4 mb-5">
+      <h2 class='mb-4'>Popular Categories</h2>
+      <h4 class='mb-4'>Audio</h4>
+      <div class="row">
+        {audioListings?.map((x) => (
+          <div class={`col-lg-4 mb-3`}>
+            <Card data={x} setData={a => setAudioListings(audioListings.filter(b => b.id !== a))} likes={likes} setLikes={(likes) => setLikes(likes)} />
+          </div>
+        ))}
+      </div>
+      <div class='row mt-4'>
+        <button class='btn btn-primary btn-md mr-auto ml-auto' style={{boxShadow: "none", outline: "none"}} onClick={() => setAudioLimit(audioLimit+6)}>Show more</button>
+      </div>
+    </div>
     </>
   );
 };

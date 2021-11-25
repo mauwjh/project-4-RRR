@@ -13,17 +13,17 @@ const CreateListing = ({authenticated}) => {
   const {user} = UserContext()
   const navigate = useNavigate();
   
-  if(!authenticated) {
-    navigate('/login')
-  }
   
   useEffect(() => {
+    if(!authenticated) {
+      navigate('/login')
+    }
     const getCategories = async () => {
       const { data } = await axios.get("/api/categories");
       setMultiselectData(data.rows);
     };
     getCategories();
-  }, [navigate, user]);
+  }, [navigate, user, authenticated]);
   console.log(multiselectData);
 
 

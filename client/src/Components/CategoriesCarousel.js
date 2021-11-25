@@ -18,8 +18,6 @@ const CategoriesCarousel = ({ data, cols }) => {
     sortedData = [...sortedData, data.slice((data.length - (data.length % cols)), data.length)]
   }
 
-  console.log(sortedData);
-
   return (
     <section class="pt-1 pb-1 mb-3 d-none d-md-flex" style={{minHeight: '170px'}}>
       <div class="container">
@@ -50,7 +48,7 @@ const CategoriesCarousel = ({ data, cols }) => {
                   <div class={`carousel-item ${i === 0 ? "active" : null}`}>
                     <div class="row">
                       {sortedData[i].map((a) => (
-                        <div class={`col-md-2 mb-4 text-center`}><Link to={`/listings/${a.name}/${a.id}`}><span  style={{color: 'black'}}>{a.name}</span></Link></div>
+                        <div class={`col-md-2 mb-4 text-center`}><Link to={`/listings/${a.name}/${a.id}`}><span  style={{color: 'black', fontSize: '15px'}}>{a.name}</span></Link></div>
                       ))}
                     </div>
                   </div>

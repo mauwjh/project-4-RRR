@@ -1,6 +1,7 @@
 import Card from "./Card";
+import { Link } from "react-router-dom";
 
-const Carousel = ({ header, data, cols, likes, setLikes, setData }) => {
+const Carousel = ({ header, data, cols, likes, setLikes, setData, search }) => {
   let sortedData = [];
 
   for (let i = 0; i < data?.length; i++) {
@@ -17,8 +18,6 @@ const Carousel = ({ header, data, cols, likes, setLikes, setData }) => {
   if(data?.length % cols > 0) {
     sortedData = [...sortedData, data.slice((data.length - (data.length % cols)), data.length)]
   }
-
-  console.log(sortedData)
 
   const carouselRows = () => {
     return sortedData.map((a, i) => (
@@ -49,7 +48,7 @@ const Carousel = ({ header, data, cols, likes, setLikes, setData }) => {
                 }}
               >
                 <br />
-                Discover More {">"}
+                <Link to={`/listings/${header}/${search}`} style={{color: '#212529'}}>Discover More {">"}</Link>
               </span>
             </h3>
           </div>

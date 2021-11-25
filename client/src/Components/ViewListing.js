@@ -12,10 +12,16 @@ const ViewListing = () => {
   const [listingLikes, setListingLikes] = useState();
   const [categoryList, setCategoryList] = useState();
   const [similarListings, setSimilarListings] = useState();
+  const [offers, setOffers] = useState()
 
   const { id } = useParams();
 
   useEffect(() => {
+    const getOffers = async () => {
+      const result = await axios.get(`/api/offers/listing/${id}`)
+      setOffers(result.data.rows)
+    }
+    getOffers()
     const getCategories = async () => {
       const result = await axios.get("/api/categories");
       setCategoryList(result.data.rows);
@@ -45,7 +51,7 @@ const ViewListing = () => {
     if (user.userId) getLikes();
   }, [id, listing?.id, user.userId, listing?.categories_id]);
 
-  console.log(listing);
+  console.log(offers);
 
   const like = () => {
     if (!user?.authenticated) {
@@ -149,6 +155,30 @@ const ViewListing = () => {
       );
     }
   };
+
+  const button = () => {
+    if(offers?.filter(x => x.closed === 'accepted').length > 0) {
+      return (
+        <button class='btn btn-dark btn-md btn-block mt-3 mb-3 disabled'>Listing Closed!</button>
+      )
+    } else if(listing?.creator_id === user.userId){
+      return(
+        <div class='d-flex flex-column '>
+        <Link to={`/account/${user.userId}/offersReceived`}><button class='btn btn-success btn-md btn-block mt-3 mb-3'>View Offers</button></Link>
+        <span class='text-center'>This is your listing!</span>
+        </div>
+      )
+    } else if(offers?.filter(x => x.buyer_id === user.userId).length > 0) {
+      return (
+        <button class='btn btn-dark btn-md btn-block mt-3 mb-3 disabled'>Awaiting Response</button>
+      )
+    } 
+    else {
+      return(
+        <Link to='transact'><button class="btn btn-primary btn-md btn-block mt-3 mb-3">Exchange</button></Link>
+      )
+    }
+  }
 
   return (
     <>
@@ -270,20 +300,20 @@ const ViewListing = () => {
                 class="fas fa-user-circle mr-3 align-middle mt-1"
                 style={{ fontSize: "30px" }}
               ></i>
-              <div
+              <Link to={`/account/${listing?.creator_id}`} style={{ color: '#212529'}}><div
                 style={{ fontWeight: "normal" }}
                 class="d-inline align-middle"
               >
                 {listing?.users_username}
-              </div>
+              </div></Link>
             </div>
-            <button class="btn btn-primary btn-md btn-block mt-3 mb-3">Exchange</button>
+            {button()}
           </div>
         </div>
-        <h4 class="mb-3 mt-5">Listings You Might Be Interested In</h4>
+        <h4 class="mb-4 mt-5">Listings You Might Be Interested In</h4>
         <div class="row">
           {similarListings?.map((x) => (
-            <div class={`col-lg-3 mb-3`}>
+            <div class={`col-lg-3 mb-3 mt-2`}>
               <Card
                 data={x}
                 setData={(a) => setSimilarListings(similarListings.filter(b => b.id !== a))}

@@ -30,7 +30,13 @@ router.get('/:id', async (req, res) => {
 })
 
 router.get('/categories/:id/:limit', async (req, res) => {
-  result = await pool.query("SELECT listings.creator_id, listings.id, listings.title, listings.description, listings.category, listings.sale_option, listings.looking_for, listings.img, listings.price, categories.id as categories_id, categories.name as categories_name, users.username as users_username, users.email as users_email FROM listings JOIN categories ON categories.id = listings.category JOIN users ON users.id = listings.creator_id WHERE categories.id = $1 ORDER BY listings.id DESC LIMIT $2", [req.params.id, req.params.limit])
+  if(req.params.id === 'recent') {
+    result = await pool.query("SELECT listings.creator_id, listings.id, listings.title, listings.description, listings.category, listings.sale_option, listings.looking_for, listings.img, listings.price, categories.id as categories_id, categories.name as categories_name, users.username as users_username, users.email as users_email FROM listings JOIN categories ON categories.id = listings.category JOIN users ON users.id = listings.creator_id ORDER BY listings.id DESC LIMIT $1", [req.params.limit])
+  } else if(req.params.id === 'liked') {
+    result = await pool.query("SELECT users.username as users_username, likes.listing_id as id, listings.title, listings.creator_id, listings.sale_option, listings.img, listings.category, categories.name as categories_name, COUNT(likes.listing_id) as likes from likes JOIN listings ON likes.listing_id = listings.id JOIN categories ON listings.category = categories.id JOIN users ON users.id = listings.creator_id GROUP BY listing_id, listings.title, listings.creator_id, listings.sale_option,listings.category,categories.name, listings.img, users_username ORDER BY COUNT(listing_id) DESC LIMIT $1", [req.params.limit])
+  } else {
+    result = await pool.query("SELECT listings.creator_id, listings.id, listings.title, listings.description, listings.category, listings.sale_option, listings.looking_for, listings.img, listings.price, categories.id as categories_id, categories.name as categories_name, users.username as users_username, users.email as users_email FROM listings JOIN categories ON categories.id = listings.category JOIN users ON users.id = listings.creator_id WHERE categories.id = $1 ORDER BY listings.id DESC LIMIT $2", [req.params.id, req.params.limit])
+  }
   res.json(result)
 })
 

@@ -149,7 +149,7 @@ const Card = ({ data, likes, setLikes, setData }) => {
           <div style={{ fontWeight: "normal", paddingLeft: 25 }} class="col-10">
             <Link
               to={`/account/${data.creator_id}`}
-              style={{ fontSize: "18px", lineHeight: "18px" }}
+              style={{ fontSize: "17px", lineHeight: "17px", color: '#212529' }}
             >
               {data.users_username}
             </Link>
@@ -180,11 +180,11 @@ const Card = ({ data, likes, setLikes, setData }) => {
         }}
       >
         <Link to={`/listings/${data.id}`}>
-          <h4 class="card-title" style={{ fontSize: "18px", color: "black" }}>
+          <h4 class="card-title" style={{ fontSize: "17px", color: "black" }}>
             {data.title}
           </h4>
         </Link>
-        <p class="card-text" style={{ maxHeight: "50px", fontSize: "17px" }}>
+        <p class="card-text" style={{ maxHeight: "50px", fontSize: "16px" }}>
           {data.sale_option}
           <br />
           in{" "}
